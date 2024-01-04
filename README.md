@@ -16,12 +16,12 @@ The code includes a GitHub Actions workflow that:
 
 ## Installation of the sample GitHub CLI Extension
 
-Install the [GitHub CLI](https://cli.github.com/).
+Prerequisite: install the [GitHub CLI](https://cli.github.com/).
 
 Install:
 
 ```shell
-gh extension install bryanknox/gh-sample-ext-csharp
+gh extension install XpiritBV/gh-sample-ext-csharp
 ```
 
 Upgrade:
@@ -50,7 +50,7 @@ When run, the extension simply outputs a short greeting message.
 This repo includes a [Dev Container](https://containers.dev/)
 that eleminates the need to install the [GitHub CLI](https://cli.github.com/), .NET 8.0 SDK, and other tools on your local machine.
 
-If you're using VS Code see [Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers).
+If you're using VS Code, see [Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers).
 
 ### GitHub CLI Docs
 - [Using GitHub CLI extensions](https://docs.github.com/en/github-cli/github-cli/using-github-cli-extensions)
@@ -82,7 +82,7 @@ The [softprops/action-gh-release](https://github.com/softprops/action-gh-release
 
 
 ### Publishing a Release of the Extension
-A draft release can be published by simply editing the release and switching it from draft to published.
+A draft release in the repo can be published by editing the release and switching it from draft to published.
 
 That can be done using the GitHub CLI. For example:
 
@@ -90,4 +90,4 @@ That can be done using the GitHub CLI. For example:
 gh release edit v1.2.3 --draft=false
 ```
 
-Once the release is published the extension can be installed as described above.
+Once the release is published, users can install the extension as described above.
