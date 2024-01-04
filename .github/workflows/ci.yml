@@ -1,0 +1,89 @@
+name: ci/cd
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🤘 checkout
+        uses: actions/checkout@v3
+
+      - name: ✓ check format
+        run: |
+          dotnet format whitespace --verify-no-changes -v:diag --exclude ~/.nuget
+          dotnet format style --verify-no-changes -v:diag --exclude ~/.nuget
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🤘 checkout
+        uses: actions/checkout@v3
+
+      - name: 🔧 setup-dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+          dotnet-quality: 'ga'
+
+      - name: 🔄 restore
+        run: dotnet restore -m:1
+
+      - name: 🙏 build
+        run: dotnet build --no-restore -m:1
+
+#      - name: 🧪 test
+#        run: dotnet test --no-build --no-restore
+
+      - name: 📦 publish (package) artifacts
+        run: |
+          dotnet publish src/Extension.csproj -c Release -r win-x64 --self-contained -o bin/win-x64 --no-restore -p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+          dotnet publish src/Extension.csproj -c Release -r osx-x64 --self-contained -o bin/osx-x64 --no-restore -p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+          dotnet publish src/Extension.csproj -c Release -r osx-arm64 --self-contained -o bin/osx-arm64 --no-restore -p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+          dotnet publish src/Extension.csproj -c Release -r linux-x64 --self-contained -o bin/linux-x64 --no-restore -p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: ➡️ stage artifacts
+        run: |
+          mkdir -p ${{ runner.temp }}/staging
+          cp bin/win-x64/gh-sample-ext-csharp.exe ${{ runner.temp }}/staging/sample-ext-csharp-windows-amd64.exe
+          cp bin/osx-x64/gh-sample-ext-csharp ${{ runner.temp }}/staging/sample-ext-csharp-darwin-amd64
+          cp bin/osx-arm64/gh-sample-ext-csharp ${{ runner.temp }}/staging/sample-ext-csharp-darwin-arm64
+          cp bin/linux-x64/gh-sample-ext-csharp ${{ runner.temp }}/staging/sample-ext-csharp-linux-amd64
+
+      - name: ⬆️ upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: executables
+          path: ${{ runner.temp }}/staging/*
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+
+      - name: 🤘 checkout
+        uses: actions/checkout@v3
+
+      - name: ⬇️ download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: executables
+          path: ${{ runner.temp }}/dist
+
+      - name: 🚀 create draft release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          generate_release_notes: false
+          fail_on_unmatched_files: true
+          files: |
+            ${{ runner.temp }}/dist/sample-ext-csharp-windows-amd64.exe
+            ${{ runner.temp }}/dist/sample-ext-csharp-darwin-amd64
+            ${{ runner.temp }}/dist/sample-ext-csharp-darwin-arm64
+            ${{ runner.temp }}/dist/sample-ext-csharp-linux-amd64

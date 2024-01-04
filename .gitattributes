@@ -1,0 +1,7 @@
+# Normalize line endings to LF for all text files committed into the git repo
+# while leaving local line endings untouched in the working tree (local folders).
+# This helps avoid problems where contributors don't all have their git config set
+# to ensure text files committed use LF line endings.
+# See: https://www.aleksandrhovhannisyan.com/blog/crlf-vs-lf-normalizing-line-endings-in-git/
+
+* text=auto

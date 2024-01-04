@@ -1,0 +1,34 @@
+{
+	"name": "C# .NET GitHub CLI Ext",
+
+  // For info about the dotnet dev container image see:
+  //   https://github.com/devcontainers/images/blob/main/src/dotnet/README.md
+  // For a list of tag variants for the dotnet dev container images see:
+  //   https://mcr.microsoft.com/v2/devcontainers/dotnet/tags/list
+  "image": "mcr.microsoft.com/vscode/devcontainers/dotnet:8.0-bookworm-slim",
+
+	// Configure tool-specific properties.
+	"customizations": {
+
+		// Configure properties specific to VS Code.
+		"vscode": {
+
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"editorconfig.editorconfig",
+				"github.vscode-github-actions",
+				"github.copilot",
+				"github.copilot-chat",
+				"ms-dotnettools.csdevkit",
+				"ms-vscode.powershell"
+			]
+		}
+	},
+
+  // For available dev container features see:
+  //   https://containers.dev/features
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+	"remoteUser": "vscode"
+}
