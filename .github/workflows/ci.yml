@@ -38,7 +38,7 @@ jobs:
 #      - name: 🧪 test
 #        run: dotnet test --no-build --no-restore
 
-      - name: 📦 publish (package) artifacts
+      - name: 📦 publish (compile & package) artifacts
         run: |
           dotnet publish src/Extension.csproj -c Release -r win-x64 --self-contained -o bin/win-x64 --no-restore -p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
           dotnet publish src/Extension.csproj -c Release -r osx-x64 --self-contained -o bin/osx-x64 --no-restore -p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
